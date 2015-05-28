@@ -1,0 +1,7 @@
+C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\bin\Debug\ChatServer.exe
+C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\bin\Debug\ChatServer.pdb
+C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.Form_Server.resources
+C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.Properties.Resources.resources
+C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.csproj.GenerateResource.Cache
+C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.exe
+C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.pdb

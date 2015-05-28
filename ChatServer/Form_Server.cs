@@ -9,11 +9,16 @@ using System.Windows.Forms;
 
 namespace ChatServer
 {
-    public partial class Form1 : Form
+    public partial class Form_Server : Form
     {
-        public Form1()
+        public Form_Server()
         {
             InitializeComponent();
+            Random r = new Random();
+            this.richTextBox1.Text = r.Next(49152,65535).ToString(); 
         }
+
+        
+
     }
 }
