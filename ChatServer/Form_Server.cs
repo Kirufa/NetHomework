@@ -14,8 +14,8 @@ namespace ChatServer
         public Form_Server()
         {
             InitializeComponent();
-            Random r = new Random();
-            this.richTextBox1.Text = r.Next(49152,65535).ToString(); 
+        
+            this
         }
 
         

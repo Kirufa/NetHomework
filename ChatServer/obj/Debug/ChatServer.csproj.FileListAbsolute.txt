@@ -5,3 +5,5 @@ C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.Propertie
 C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.csproj.GenerateResource.Cache
 C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.exe
 C:\Users\wang\Desktop\GIT2\NetHomework\ChatServer\obj\Debug\ChatServer.pdb
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.exe
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.pdb

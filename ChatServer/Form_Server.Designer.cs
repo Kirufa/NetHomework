@@ -28,24 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.panel_RichTextBox = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // richTextBox1
+            // panel_RichTextBox
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(12, 12);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(100, 96);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
+            this.panel_RichTextBox.Location = new System.Drawing.Point(12, 12);
+            this.panel_RichTextBox.Name = "panel_RichTextBox";
+            this.panel_RichTextBox.Size = new System.Drawing.Size(200, 226);
+            this.panel_RichTextBox.TabIndex = 0;
             // 
             // Form_Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(571, 346);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.panel_RichTextBox);
             this.Name = "Form_Server";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -54,7 +52,8 @@
 
         #endregion
 
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Panel panel_RichTextBox;
+
     }
 }
 
