@@ -8,8 +8,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
-namespace ChatServer
+namespace Handle
 {
     public class SocketHandle
     {
@@ -18,6 +19,10 @@ namespace ChatServer
             public const int MAX_DATASIZE = 2048;
             public int Size;
             public byte[] Data = new byte[MAX_DATASIZE];
+            public int Type;
+            //1: TCP
+            //2: UDP,Image Size
+
 
         }
         public void SendPicture(Socket des, Bitmap bmp)
@@ -27,7 +32,24 @@ namespace ChatServer
 
         }
 
-        private List<byte[]> DivideBitmap(Bitmap bmp)
+        private static byte[] DgramToByte(Dgram dgram)
+        {           
+	        byte[] buffer = new byte[Marshal.SizeOf(dgram)];
+	        GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            Marshal.StructureToPtr(dgram, handle.AddrOfPinnedObject(), false);
+	        handle.Free();
+	        return buffer;
+        }
+
+        private static Dgram ByteToDgram(byte[] _Arr)
+        {
+            GCHandle handle = GCHandle.Alloc(_Arr, GCHandleType.Pinned);
+            Dgram structure = (Dgram)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Dgram));
+            handle.Free();
+            return structure;
+        }
+
+        private static List<byte[]> DivideBitmap(Bitmap bmp)
         {
             MemoryStream ms = new MemoryStream();
             bmp.Save(ms, ImageFormat.Png);
@@ -66,21 +88,24 @@ namespace ChatServer
             public static IPEndPoint UDPEndPoint;
             public static Socket TCPServer;
             public static List<ClientData> TCP_UDP_Client;
+            public static Socket UDP_Client;
             private static Timer Accept_Timer;
-            
+
             //UDP
             public static Socket UDPServer;
-            
+
             //other
             public const int Port = 61361;
             public const int MAX_LISTEN_SIZE = 10;
-            public const string ServerIP = "127.0.0.1";
+            public static string ServerIP = "192.168.0.100";
             public const int TIMER_INTERVAL = 50;   // ms
             private static int ListenCount = MAX_LISTEN_SIZE;
 
-            private class ClientData
+            public class ClientData
             {
-                public Socket Client;
+                private Socket TCP_Client;
+                private Socket UDP_Client;
+                private IPEndPoint EP;
                 public int ID;
                 public static int IDCount = 0;
 
@@ -88,7 +113,7 @@ namespace ChatServer
 
                 public ClientData(Socket socket)
                 {
-                    Client = socket;
+                    TCP_Client = socket;
                     ID = IDCount++;
                     Receive_Timer = new Timer();
                     Receive_Timer.Interval = SocketData.TIMER_INTERVAL;
@@ -96,9 +121,9 @@ namespace ChatServer
                     Receive_Timer.Start();
                 }
 
-                public ~ClientData()
+                ~ClientData()
                 {
-                    Client.Close();                    
+                    TCP_Client.Close();
                     Receive_Timer.Stop();
                     Receive_Timer.Dispose();
                 }
@@ -106,32 +131,38 @@ namespace ChatServer
                 private void Receive_Timer_Tick(object sender, EventArgs e)
                 {
                     //send to all online member
-
+                    Dgram _Temp = new Dgram();
+                    
+                    int RecvSize = TCP_Client.Receive();
                 }
 
 
             }
 
+
+         
             public static void InitialUDPServer()
             {
-                UDPServer = new Socket(AddressFamily.InterNetwork,SocketType.Dgram,ProtocolType.Udp);
+                UDPServer = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 UDPEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), Port);
                 UDPServer.Bind(UDPEndPoint);
-            }
-            private static void TCPReceiveInitial()
+            }     
+
+            public static void InitialServer(string _IP)
             {
-                
-            
+                ServerIP = _IP;
+                InitialTCPServer();
+                InitialUDPServer();
             }
-         
-            public static void InitialTCPServer()
+
+            private static void InitialTCPServer()
             {
                 TCPServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 TCPEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), SocketData.Port);
                 EndPoint _EndPoint = (EndPoint)TCPEndPoint;
                 TCPServer.Bind(_EndPoint);
                 TCPServer.Listen(MAX_LISTEN_SIZE);
-                TCPAcceptInitial();   
+                TCPAcceptInitial();
             }
 
             private static void TCPAcceptInitial()
@@ -148,18 +179,16 @@ namespace ChatServer
             {
                 if (ListenCount > 0)
                 {
-                    ClientData _Client = new ClientData();
-                    _Client.Client = TCPServer.Accept();
-                    _Client.ID = ClientData.IDCount++;
-                   
+                    Socket _Socket = TCPServer.Accept();
+                    ClientData _Client = new ClientData(_Socket);  
                     TCP_UDP_Client.Add(_Client);
                     ListenCount--;
                 }
-            }          
+            }
         }
     }
 
-    
-   
+
+
 
 }
