@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Xml.Serialization;
+using ChatServer;
 namespace Handle
 {
     public class SocketHandle
@@ -21,7 +22,7 @@ namespace Handle
             public byte[] Data = new byte[MAX_DATASIZE];
             public byte[] Name = new byte[STRING_SIZE];
             public int DataLength;
-            public int StringLength;
+            public int NameLength;
             public int Type;
             //0: check alive, client <-> server
             //1: TCP Text Data, client -> server 
@@ -30,6 +31,7 @@ namespace Handle
             //4: TCP UDP Image Size, follow the UDP Image, server -> client
             //5: UDP Image, client -> server
             //6: UDP Image, server -> client
+            //7: TCP send Name client -> server
           
 
 
@@ -64,12 +66,12 @@ namespace Handle
             XmlSerializer _Xs = new XmlSerializer(typeof(Dgram));
           //  MessageBox.Show(_Ms.ToArray().Length.ToString());
 
-         /*   using (FileStream fs = new FileStream("123.xml", FileMode.Create))
+            using (FileStream fs = new FileStream("123.xml", FileMode.Create))
             {
                 fs.Write(_Ms.ToArray(), 0, (int)_Ms.Length);
                 fs.Close();
             }
-            */
+            
 
 
             Dgram _Ret = (Dgram)_Xs.Deserialize(_Ms); 
@@ -123,18 +125,19 @@ namespace Handle
         }
 
         private static string ByteToStr(byte[] _Arr,int Len)
-        {
-           
+        {           
             return Encoding.Unicode.GetString(_Arr, 0, Len);
         }
 
-        private void SendToAllClient(byte[] Data,int Leng,int Tyte)
+        private void SendToAllClient(Dgram _Dg)
         {
-            Dgram _Dg = new Dgram();
-            SocketHandle.SocketData.TCP_UDP_Client.
-
-            
-
+            foreach (SocketData.ClientData i in SocketData.TCP_UDP_Client)
+            {
+                if (i.ReceiveRunning)
+                {
+                    i.TCPSend(_Dg);
+                }
+            }
         }
 
         public class SocketData
@@ -193,7 +196,6 @@ namespace Handle
                     Accept_Thread = new Thread(this.Accept_Thread_Run);
                     Accept_Thread.IsBackground = true;
                     Accept_Thread.Start();
-
                 }
                 //******************************
                 //**********\initional**********
@@ -209,7 +211,8 @@ namespace Handle
                         if (ListenCount > 0)
                         {
                             Socket _Socket = TCPServer.Accept();
-                            MessageBox.Show("Accept");
+                            IPEndPoint _EP = _Socket.RemoteEndPoint as IPEndPoint;
+                            Form_Server.AddText(_EP.Address.ToString(), "-1", "Accept", "Successed");
                             ClientData _Client = new ClientData(_Socket);
                             TCP_UDP_Client.Add(_Client);
                             ListenCount--;
@@ -229,10 +232,14 @@ namespace Handle
                 private Socket TCP_Client;
                 private Socket UDP_Client;
                 private IPEndPoint EP;
-                public int ID;               
+                
+                public int ID;
+                public string Name;
+                
                 private Thread Receive_Thread;
+                
 
-                private bool ReceiveRunning = true;
+                public bool ReceiveRunning = true;
                
                 public ClientData(Socket socket)
                 {
@@ -249,6 +256,22 @@ namespace Handle
                     this.ReceiveRunning = false;    
                 }
 
+                public void TCPSend(Dgram _Dgram)
+                {
+                    byte[] _Arr = SocketHandle.DgramToByte(_Dgram);
+
+                    try
+                    {
+                        TCP_Client.Send(_Arr);
+                    }
+                    catch (Exception ex)
+                    {
+                        Form_Server.AddText(this.Name, this.ID.ToString(), "Except", ex.ToString());
+                        this.ReceiveRunning = false;
+                    }
+
+                }
+
                 private void Receive_Thread_Run()
                 {
                     while (ReceiveRunning)
@@ -263,7 +286,7 @@ namespace Handle
                         }
                         catch(Exception ex)
                         {
-                            MessageBox.Show(ex.ToString());
+                            Form_Server.AddText(Name, ID.ToString(), "Except", ex.ToString());
                             break;
                         }
 
@@ -275,7 +298,7 @@ namespace Handle
                                 break;
                             case 1:
                                 string _Str = ByteToStr(_Temp.Data, _Temp.DataLength);
-                                MessageBox.Show(_Str);
+                                Form_Server.AddText(Name, ID.ToString(), "Recieve", _Str);
 
 
                                 break;
@@ -283,7 +306,11 @@ namespace Handle
                                 break;
                             case 5:
                                 break;
-                        
+                            case 7:
+                                string _Str2 = ByteToStr(_Temp.Name, _Temp.NameLength);
+                                this.Name = _Str2;
+                                Form_Server.AddText(Name, ID.ToString(), "Name", "Recieve Name.");
+                                break;
                             default:
                                 break;
                         }

@@ -11,6 +11,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using Handle;
+using Khendys.Controls;
 
 namespace ChatServer
 {
@@ -21,6 +22,9 @@ namespace ChatServer
             InitializeComponent();       
           
         }
+
+        private static ExRichTextBox ERT;        
+
         /*
         Socket client;
         Socket server;
@@ -53,6 +57,32 @@ namespace ChatServer
             int n = Client.ReceiveFrom(arr,ref end);
            // textBox1.Text = Encoding.ASCII.GetString(arr, 0, n);
             Client.SendTo(arr, n, SocketFlags.None, end);*/
+        }
+
+        private void Form_Server_Load(object sender, EventArgs e)
+        {
+            ERT = new ExRichTextBox();
+            ERT.Size = panel_RichTextBox.Size;
+            ERT.Location = new Point(0, 0);
+            panel_RichTextBox.Controls.Add(ERT);
+        }
+
+        public static void AddText(string Name,string _ID,string _Query,string Text)
+        {
+            if (ERT.InvokeRequired)
+            {
+                ERT.Invoke((MethodInvoker)delegate
+                    {
+                        string _Str = Name + "(" + _ID + ")" + _Query + " : " + Text + '\n';
+                        ERT.AppendText(_Str);
+                    });
+                
+            }
+            else
+            {
+                string _Str = Name + "(" + _ID + ")" + _Query + " : " + Text + '\n';
+                ERT.AppendText(_Str);
+            }
         }
 
         
