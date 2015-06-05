@@ -32,6 +32,7 @@ namespace Handle
             //5: UDP Image, client -> server
             //6: UDP Image, server -> client
             //7: TCP send Name client -> server
+            //20: TCP System message server -> client
           
 
 
@@ -129,7 +130,7 @@ namespace Handle
             return Encoding.Unicode.GetString(_Arr, 0, Len);
         }
 
-        private void SendToAllClient(Dgram _Dg)
+        public static void SendToAllClient(Dgram _Dg)
         {
             foreach (SocketData.ClientData i in SocketData.TCP_UDP_Client)
             {
@@ -299,10 +300,12 @@ namespace Handle
                             case 1:
                                 string _Str = ByteToStr(_Temp.Data, _Temp.DataLength);
                                 Form_Server.AddText(Name, ID.ToString(), "Recieve", _Str);
-
+                                _Temp.Type = 2;
+                                SocketHandle.SendToAllClient(_Temp);
 
                                 break;
                             case 3:
+
                                 break;
                             case 5:
                                 break;
@@ -310,6 +313,8 @@ namespace Handle
                                 string _Str2 = ByteToStr(_Temp.Name, _Temp.NameLength);
                                 this.Name = _Str2;
                                 Form_Server.AddText(Name, ID.ToString(), "Name", "Recieve Name.");
+                                _Temp.Type = 20;
+                                SocketHandle.SendToAllClient(_Temp);
                                 break;
                             default:
                                 break;

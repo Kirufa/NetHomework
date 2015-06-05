@@ -13,3 +13,11 @@ C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.Pro
 C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.csproj.GenerateResource.Cache
 C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\bin\Debug\ChatServer.exe
 C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\bin\Debug\ChatServer.pdb
+C:\Users\wang\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.exe
+C:\Users\wang\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.pdb
+C:\Users\wang\Desktop\GIT\NetHomework\ChatServer\bin\Debug\ChatServer.exe
+C:\Users\wang\Desktop\GIT\NetHomework\ChatServer\bin\Debug\ChatServer.pdb
+C:\Users\wang\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.csprojResolveAssemblyReference.cache
+C:\Users\wang\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.Form_Server.resources
+C:\Users\wang\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.Properties.Resources.resources
+C:\Users\wang\Desktop\GIT\NetHomework\ChatServer\obj\Debug\ChatServer.csproj.GenerateResource.Cache

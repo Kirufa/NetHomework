@@ -37,12 +37,12 @@
             // 
             this.panel_RichTextBox.Location = new System.Drawing.Point(12, 12);
             this.panel_RichTextBox.Name = "panel_RichTextBox";
-            this.panel_RichTextBox.Size = new System.Drawing.Size(200, 226);
+            this.panel_RichTextBox.Size = new System.Drawing.Size(611, 226);
             this.panel_RichTextBox.TabIndex = 0;
             // 
             // button_Start
             // 
-            this.button_Start.Location = new System.Drawing.Point(218, 12);
+            this.button_Start.Location = new System.Drawing.Point(629, 12);
             this.button_Start.Name = "button_Start";
             this.button_Start.Size = new System.Drawing.Size(75, 23);
             this.button_Start.TabIndex = 1;
@@ -52,17 +52,17 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(299, 12);
+            this.textBox1.Location = new System.Drawing.Point(710, 12);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 22);
             this.textBox1.TabIndex = 3;
-            this.textBox1.Text = "192.168.0.103";
+            this.textBox1.Text = "10.201.18.60";
             // 
             // Form_Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(571, 346);
+            this.ClientSize = new System.Drawing.Size(1010, 352);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button_Start);
             this.Controls.Add(this.panel_RichTextBox);

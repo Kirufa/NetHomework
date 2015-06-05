@@ -64,6 +64,7 @@ namespace ChatServer
             ERT = new ExRichTextBox();
             ERT.Size = panel_RichTextBox.Size;
             ERT.Location = new Point(0, 0);
+            ERT.ReadOnly = true;
             panel_RichTextBox.Controls.Add(ERT);
         }
 
