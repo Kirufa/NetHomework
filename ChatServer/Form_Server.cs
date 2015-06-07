@@ -23,6 +23,7 @@ namespace ChatServer
           
         }
 
+        public static PictureBox pic;
         private static ExRichTextBox ERT;        
 
         /*
@@ -66,6 +67,8 @@ namespace ChatServer
             ERT.Location = new Point(0, 0);
             ERT.ReadOnly = true;
             panel_RichTextBox.Controls.Add(ERT);
+
+            pic = this.pictureBox1;
         }
 
         public static void AddText(string Name,string _ID,string _Query,string Text)

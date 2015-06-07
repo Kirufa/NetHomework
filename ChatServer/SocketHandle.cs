@@ -61,22 +61,58 @@ namespace Handle
             return _Ms.ToArray();
         }
 
-        private static Dgram ByteToDgram(byte[] _Arr)
+        private static Dgram ByteToDgram(byte[] _Arr,int _Len)
         {
-            MemoryStream _Ms = new MemoryStream(_Arr);
+            MemoryStream _Ms = new MemoryStream(_Arr, 0, _Len);
             XmlSerializer _Xs = new XmlSerializer(typeof(Dgram));
           //  MessageBox.Show(_Ms.ToArray().Length.ToString());
-
+            /*
             using (FileStream fs = new FileStream("123.xml", FileMode.Create))
             {
                 fs.Write(_Ms.ToArray(), 0, (int)_Ms.Length);
                 fs.Close();
             }
-            
+            */
 
 
             Dgram _Ret = (Dgram)_Xs.Deserialize(_Ms); 
             return _Ret;
+        }
+
+        public static void ReSendBitmap(int N)
+        {
+            List<Dgram> _Ret = SocketData.Server.UDP_Recieve(N);
+            /*
+
+            foreach (SocketData.ClientData ite in SocketData.TCP_UDP_Client)
+            {
+                
+            }
+
+           */
+
+            Bitmap bmp = RevertBitmap(_Ret);
+
+            Form_Server.pic.Image = bmp;
+
+
+        }
+
+        public static Bitmap RevertBitmap(List<Dgram> _List)
+        {
+            MemoryStream _Ms = new MemoryStream();
+
+            foreach (Dgram ite in _List)
+            {
+                _Ms.Read(ite.Data, 0, ite.DataLength);
+            }
+
+            Bitmap _Ret = new Bitmap(_Ms);
+
+            return _Ret;
+
+
+
         }
 
         private static List<byte[]> DivideBitmap(Bitmap bmp)
@@ -117,7 +153,7 @@ namespace Handle
             SocketData.Server = new SocketData.ServerData();
             SocketData.ServerData.ServerIP = _IP;
             SocketData.Server.InitialTCPServer();
-            SocketData.Server.InitialUDPServer();
+           // SocketData.Server.InitialUDPServer();
         }
 
         private static byte[] StrToByte(string _Str)
@@ -176,10 +212,10 @@ namespace Handle
                 //*****************************
                 //**********initional**********
                 //*****************************
-                public void InitialUDPServer()
+                private void InitialUDPServer()
                 {
                     UDPServer = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                    UDPEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), Port);
+                    UDPEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), 0);
                     UDPServer.Bind(UDPEndPoint);
                 }            
 
@@ -225,7 +261,33 @@ namespace Handle
                 //**********background thread**********
                 //*************************************
 
-               
+                //*******************************
+                //**********UDP recieve**********
+                //*******************************
+
+                public List<Dgram> UDP_Recieve(int N)
+                {
+                    List<Dgram> _Ret = new List<Dgram>();
+                    InitialUDPServer();
+                    EndPoint _EP = (EndPoint)UDPEndPoint;
+                    int RecvSize;
+                    for(int i=0;i!=N;++i)
+                    {
+                        byte[] _Arr = new byte[RECEIVE_LENGTH];
+                        RecvSize = UDPServer.ReceiveFrom(_Arr, ref _EP);
+                        MessageBox.Show(RecvSize.ToString());
+                        Dgram _DG = SocketHandle.ByteToDgram(_Arr, RecvSize);
+                        _Ret.Add(_DG);
+                    }
+                    UDPServer.Close();
+
+                    return _Ret;
+                }
+
+                //********************************
+                //**********\UDP recieve**********
+                //********************************
+              
             }
 
             public class ClientData
@@ -249,6 +311,8 @@ namespace Handle
                     Receive_Thread = new Thread(this.Receive_Thread_Run);
                     Receive_Thread.IsBackground = true;                   
                     Receive_Thread.Start();
+
+                    EP = (IPEndPoint)socket.RemoteEndPoint;
                 }
 
                 ~ClientData()
@@ -272,6 +336,21 @@ namespace Handle
                     }
 
                 }
+                
+                private void UDP_Send(List<Dgram> _List,EndPoint _EP)
+                {
+                    UDP_Client = new Socket(AddressFamily.InterNetwork,SocketType.Dgram,ProtocolType.Udp);
+
+                    foreach(Dgram ite in _List)
+                    {
+                        byte[] _Arr = DgramToByte(ite);
+                        UDP_Client.SendTo(_Arr, _EP);
+                    }
+
+                    UDP_Client.Close();
+                    
+
+                }
 
                 private void Receive_Thread_Run()
                 {
@@ -291,8 +370,7 @@ namespace Handle
                             break;
                         }
 
-                        _Temp = SocketHandle.ByteToDgram(_Arr);
-
+                        _Temp = SocketHandle.ByteToDgram(_Arr, RecvSize);
                         switch(_Temp.Type)
                         {
                             case 0:
@@ -305,7 +383,9 @@ namespace Handle
 
                                 break;
                             case 3:
-
+                                MessageBox.Show(_Temp.Type.ToString());                    
+                           //    int _N = Convert.ToInt32(ByteToStr(_Temp.Data, _Temp.DataLength));
+                                SocketHandle.ReSendBitmap(_N);
                                 break;
                             case 5:
                                 break;
