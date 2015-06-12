@@ -46,7 +46,7 @@ namespace Handle
                                     + sizeof(int)
                                     + sizeof(int);
         */
-        public const int RECEIVE_LENGTH = 10240;
+        public const int RECEIVE_LENGTH = 51200;
 
         public static void SendPicture(Socket des, Bitmap bmp)
         {
@@ -66,34 +66,48 @@ namespace Handle
             MemoryStream _Ms = new MemoryStream(_Arr, 0, _Len);
             XmlSerializer _Xs = new XmlSerializer(typeof(Dgram));
           //  MessageBox.Show(_Ms.ToArray().Length.ToString());
-            /*
+            
             using (FileStream fs = new FileStream("123.xml", FileMode.Create))
             {
                 fs.Write(_Ms.ToArray(), 0, (int)_Ms.Length);
                 fs.Close();
             }
-            */
+            
 
 
             Dgram _Ret = (Dgram)_Xs.Deserialize(_Ms); 
             return _Ret;
         }
 
-        public static void ReSendBitmap(int N)
+        public static void ReSendBitmap(Dgram N,Socket socket)
         {
-            List<Dgram> _Ret = SocketData.Server.UDP_Recieve(N);
-            /*
+            List<Dgram> _Sav = new List<Dgram>();
+            int _N = Convert.ToInt32(ByteToStr(N.Data, N.DataLength));
 
-            foreach (SocketData.ClientData ite in SocketData.TCP_UDP_Client)
+           //recieve
+            for(int i=0;i!=_N;++i)
             {
-                
+                byte[] _Arr = new byte[RECEIVE_LENGTH];
+                byte[] _Len = new byte[4];
+                socket.Receive(_Len, 4, SocketFlags.None);
+                int recv = socket.Receive(_Arr, BitConverter.ToInt32(_Len, 0), SocketFlags.None);
+
+                _Sav.Add(ByteToDgram(_Arr, recv));
             }
+           
+            //resend
+            N.Type = 4;
+            SendToAllClient(N, false);
 
-           */
+            foreach (Dgram ite in _Sav)
+            {
+                ite.Type = 6;
+                SendToAllClient(ite, true);
+            }
+         //   Bitmap bmp = RevertBitmap(_Sav);
 
-            Bitmap bmp = RevertBitmap(_Ret);
 
-            Form_Server.pic.Image = bmp;
+           // Form_Server.pic.Image = bmp;
 
 
         }
@@ -103,8 +117,8 @@ namespace Handle
             MemoryStream _Ms = new MemoryStream();
 
             foreach (Dgram ite in _List)
-            {
-                _Ms.Read(ite.Data, 0, ite.DataLength);
+            {                
+                _Ms.Write(ite.Data, 0, ite.DataLength);
             }
 
             Bitmap _Ret = new Bitmap(_Ms);
@@ -166,7 +180,7 @@ namespace Handle
             return Encoding.Unicode.GetString(_Arr, 0, Len);
         }
 
-        public static void SendToAllClient(Dgram _Dg)
+        public static void SendToAllClient(Dgram _Dg,bool sendLen)
         {
             foreach (SocketData.ClientData i in SocketData.TCP_UDP_Client)
             {
@@ -324,10 +338,11 @@ namespace Handle
                 public void TCPSend(Dgram _Dgram)
                 {
                     byte[] _Arr = SocketHandle.DgramToByte(_Dgram);
-
+                    
                     try
-                    {
-                        TCP_Client.Send(_Arr);
+                    {                        
+                        TCP_Client.Send(BitConverter.GetBytes(_Arr.Length), 4, SocketFlags.None);
+                        TCP_Client.Send(_Arr, _Arr.Length, SocketFlags.None);
                     }
                     catch (Exception ex)
                     {
@@ -359,10 +374,12 @@ namespace Handle
                         //send to all online member
                         Dgram _Temp = new Dgram();
                         byte[] _Arr = new byte[RECEIVE_LENGTH];
+                        byte[] _Len = new byte[4];
                         int RecvSize;
                         try
                         {
-                            RecvSize = TCP_Client.Receive(_Arr);
+                            TCP_Client.Receive(_Len, 4, SocketFlags.None);
+                            RecvSize = TCP_Client.Receive(_Arr, BitConverter.ToInt32(_Len, 0), SocketFlags.None);
                         }
                         catch(Exception ex)
                         {
@@ -379,13 +396,14 @@ namespace Handle
                                 string _Str = ByteToStr(_Temp.Data, _Temp.DataLength);
                                 Form_Server.AddText(Name, ID.ToString(), "Recieve", _Str);
                                 _Temp.Type = 2;
-                                SocketHandle.SendToAllClient(_Temp);
+                                SocketHandle.SendToAllClient(_Temp, false);
 
                                 break;
                             case 3:
-                                MessageBox.Show(_Temp.Type.ToString());                    
-                           //    int _N = Convert.ToInt32(ByteToStr(_Temp.Data, _Temp.DataLength));
-                                SocketHandle.ReSendBitmap(_N);
+                              //  MessageBox.Show(_Temp.Type.ToString());                    
+                              // int _N = Convert.ToInt32(ByteToStr(_Temp.Data, _Temp.DataLength));
+                                //MessageBox.Show();
+                                SocketHandle.ReSendBitmap(_Temp, this.TCP_Client);
                                 break;
                             case 5:
                                 break;
@@ -394,7 +412,7 @@ namespace Handle
                                 this.Name = _Str2;
                                 Form_Server.AddText(Name, ID.ToString(), "Name", "Recieve Name.");
                                 _Temp.Type = 20;
-                                SocketHandle.SendToAllClient(_Temp);
+                                SocketHandle.SendToAllClient(_Temp, false);
                                 break;
                             default:
                                 break;
