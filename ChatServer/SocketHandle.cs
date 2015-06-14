@@ -47,7 +47,8 @@ namespace Handle
                                     + sizeof(int);
         */
         public const int RECEIVE_LENGTH = 51200;
-
+        public const int THREAD_SLEEP_TIME = 10;
+           
         public static void SendPicture(Socket des, Bitmap bmp)
         {
             List<byte[]> _Data = DivideBitmap(bmp);
@@ -90,7 +91,9 @@ namespace Handle
                 byte[] _Arr = new byte[RECEIVE_LENGTH];
                 byte[] _Len = new byte[4];
                 socket.Receive(_Len, 4, SocketFlags.None);
+                Thread.Sleep(THREAD_SLEEP_TIME);
                 int recv = socket.Receive(_Arr, BitConverter.ToInt32(_Len, 0), SocketFlags.None);
+                Thread.Sleep(THREAD_SLEEP_TIME);
 
                 _Sav.Add(ByteToDgram(_Arr, recv));
             }
@@ -201,7 +204,6 @@ namespace Handle
             public const int Port = 61361;
             public const int MAX_LISTEN_SIZE = 10;
             public const int THREAD_WAIT_TIME = 50;   // msec
-            
            
            
             public class ServerData
@@ -342,7 +344,9 @@ namespace Handle
                     try
                     {                        
                         TCP_Client.Send(BitConverter.GetBytes(_Arr.Length), 4, SocketFlags.None);
+                        Thread.Sleep(THREAD_SLEEP_TIME);
                         TCP_Client.Send(_Arr, _Arr.Length, SocketFlags.None);
+                        Thread.Sleep(THREAD_SLEEP_TIME);
                     }
                     catch (Exception ex)
                     {
@@ -379,7 +383,9 @@ namespace Handle
                         try
                         {
                             TCP_Client.Receive(_Len, 4, SocketFlags.None);
+                            Thread.Sleep(THREAD_SLEEP_TIME);
                             RecvSize = TCP_Client.Receive(_Arr, BitConverter.ToInt32(_Len, 0), SocketFlags.None);
+                            Thread.Sleep(THREAD_SLEEP_TIME);
                         }
                         catch(Exception ex)
                         {
