@@ -67,13 +67,13 @@ namespace Handle
             MemoryStream _Ms = new MemoryStream(_Arr, 0, _Len);
             XmlSerializer _Xs = new XmlSerializer(typeof(Dgram));
           //  MessageBox.Show(_Ms.ToArray().Length.ToString());
-            
+            /*
             using (FileStream fs = new FileStream("123.xml", FileMode.Create))
             {
                 fs.Write(_Ms.ToArray(), 0, (int)_Ms.Length);
                 fs.Close();
             }
-            
+            */
 
 
             Dgram _Ret = (Dgram)_Xs.Deserialize(_Ms); 

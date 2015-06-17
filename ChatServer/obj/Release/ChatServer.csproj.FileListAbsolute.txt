@@ -1,0 +1,7 @@
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\bin\Release\ChatServer.exe
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\bin\Release\ChatServer.pdb
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Release\ChatServer.Form_Server.resources
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Release\ChatServer.Properties.Resources.resources
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Release\ChatServer.csproj.GenerateResource.Cache
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Release\ChatServer.exe
+C:\Users\yushuen0331\Desktop\GIT\NetHomework\ChatServer\obj\Release\ChatServer.pdb
